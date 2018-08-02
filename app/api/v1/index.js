@@ -99,6 +99,9 @@ module.exports = function( app, express, urlRoot ) {
   // update one xxx
   r.put( '/objects/:objectId', mandatoryAuthorisation, require( './objects/ObjectPut' ) )
 
+  // create a new object derived from an existing one
+  r.post( '/objects/:objectId', mandatoryAuthorisation, require( './objects/ObjectDerive' ) )
+
   // update one properties xxx
   r.put( '/objects/:objectId/properties/', mandatoryAuthorisation, require( './objects/ObjectPutProperties' ) )
 

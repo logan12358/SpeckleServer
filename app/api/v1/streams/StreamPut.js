@@ -1,6 +1,7 @@
 const winston = require( 'winston' )
 const chalk = require( 'chalk' )
 const mongoose = require( 'mongoose' )
+const { concat } = require( 'lodash' )
 
 const DataStream = require( '../../../../models/DataStream' )
 const PermissionCheck = require( '../middleware/PermissionCheck' )
@@ -20,11 +21,11 @@ module.exports = ( req, res ) => {
     .then( result => PermissionCheck( req.user, 'write', result, Object.keys( req.body ) ) )
     .then( result => {
       stream = result
-      return req.body.objects ? BulkObjectSave( req.body.objects, req.user ) : true
+      return req.body.objects ? BulkObjectSave( req.body.objects.filter(x => typeof(x) == 'object'), req.user ) : true
     } )
     .then( result => {
       stream.set( req.body )
-      if ( req.body.objects ) stream.objects = result.map( obj => obj._id )
+      if ( req.body.objects ) stream.objects = concat(result.map( obj => obj._id ), req.body.objects.filter(x => typeof(x) == 'string'))
       return stream.save( )
     } )
     .then( result => {
